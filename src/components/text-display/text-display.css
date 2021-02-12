@@ -1,0 +1,10 @@
+.current {
+  border-radius: 2px;
+}
+.correct {
+  background-color: rgb(32, 216, 32);
+}
+.incorrect {
+  background-color: rgb(241, 35, 35);
+
+}

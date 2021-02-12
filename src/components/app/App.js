@@ -7,8 +7,8 @@ import InputController from "../input-controller";
 
 //two-paras API res test
 const testText = [
-  "FIRST PARAS afesf fesfs ef fefesf-efef fesff egragfaeffew efsf fesfeffe 6-e 45465 edasefee.",
-  "SECOND PARAS dwf fefefef fesf sef fesefegeg",
+  "First sentence! Kansas City is the largest city in Missouri by population and area. According to the U.S. Census Bureau, the city had an estimated population of 495,327 in 2019.",
+  "Second sentence! The city is composed of several neighborhoods, including the River Market District in the north, the 18th and Vine District in the east, and the Country Club Plaza in the south.",
 ];
 
 function App() {
