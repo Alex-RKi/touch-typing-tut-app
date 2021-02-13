@@ -1,8 +1,7 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./input-controller.css";
 
 import TextDisplay from "../text-display";
-
 import FocusLock from "react-focus-lock";
 
 export default function InputController({ parasArr }) {
@@ -12,7 +11,9 @@ export default function InputController({ parasArr }) {
 
   const hiddenInput = useRef(null);
 
-  const [running, setRunning] = useState(false);
+  let timer = useRef(null);
+  let startTime = useRef(null);
+  let passed = useRef(0);
 
   const [hiddenInputValue, setHiddenInputValue] = useState("");
 
@@ -22,6 +23,36 @@ export default function InputController({ parasArr }) {
   const [successCount, incrementSuccessCount] = useState(0);
   const [errorCount, incrementErrorCount] = useState(0);
   const [errIndicator, setErrIndicator] = useState("correct"); // incorrect | correct
+  const [timePassed, setTimePassed] = useState(0);
+
+  useEffect(() => {
+    startTime.current = new Date().getTime();
+    return () => {
+      console.log("clear!");
+      alert("clear!");
+      clearTimeout(timer.current);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!timer.current) {
+      timer.current = setTimeout(function wait() {
+        const { passed, adjust } = checkTime();
+        setTimePassed(passed);
+        setTimeout(wait, 5000 - adjust);
+      }, 5000);
+    }
+    console.log(timePassed);
+    let test = new Date(timePassed);
+    console.log(test);
+  }, [timePassed]);
+
+  const checkTime = () => {
+    const now = new Date().getTime();
+    const passed = now - startTime.current;
+    const adjust = passed % 5000;
+    return { passed, adjust };
+  };
 
   const checkInput = (e) => {
     const key = e.target.value;
@@ -30,7 +61,16 @@ export default function InputController({ parasArr }) {
       console.log("Correct!");
       setErrIndicator("correct");
       setProcessedSymbols(processedSymbols + currentSymbol);
+      if (!incomingSymbols[0]) {
+        //Task completed, break
+        incrementSuccessCount((prev) => prev + 1);
+        console.log("cleanup!");
+        clearTimeout(timer.current);
+        alert("Congrats! Task completed!");
+        return;
+      }
       setCurrentSymbol(incomingSymbols[0]);
+
       setIncomingSymbols(incomingSymbols.slice(1));
       incrementSuccessCount((prev) => prev + 1);
     } else {
@@ -55,6 +95,7 @@ export default function InputController({ parasArr }) {
         />
         <div>Error - {errorCount}</div>
         <div>Success - {successCount}</div>
+        <div>Timer {timePassed}</div>
       </div>
 
       <FocusLock>

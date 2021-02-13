@@ -5,9 +5,9 @@ import loadData from "../../utils";
 import "../input-controller";
 import InputController from "../input-controller";
 
-//two-paras API res test
+//!
 const testText = [
-  "First sentence! Kansas City is the largest city in Missouri by population and area.",
+  "First sentence!",
 ];
 
 function App() {
