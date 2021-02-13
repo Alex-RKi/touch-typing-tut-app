@@ -2,31 +2,33 @@ import React, { useEffect, useRef, useState } from "react";
 import "./input-controller.css";
 
 import TextDisplay from "../text-display";
+
 import FocusLock from "react-focus-lock";
+import moment from "moment";
 
 export default function InputController({ parasArr }) {
   const fullString = parasArr.join(" ");
   const firstSymbol = fullString[0];
   const restString = fullString.slice(1);
+  const timerUpdateInterval = 1000;
 
   const hiddenInput = useRef(null);
-
   let timer = useRef(null);
   let startTime = useRef(null);
-  let passed = useRef(0);
 
   const [hiddenInputValue, setHiddenInputValue] = useState("");
-
   const [processedSymbols, setProcessedSymbols] = useState("");
   const [currentSymbol, setCurrentSymbol] = useState(firstSymbol);
   const [incomingSymbols, setIncomingSymbols] = useState(restString);
-  const [successCount, incrementSuccessCount] = useState(0);
   const [errorCount, incrementErrorCount] = useState(0);
   const [errIndicator, setErrIndicator] = useState("correct"); // incorrect | correct
-  const [timePassed, setTimePassed] = useState(0);
+  const [msecPassed, setMsecPassed] = useState(0);
+  const [speed, setSpeed] = useState(0);
+  const [accuracy, setAccuracy] = useState(1);
+  const [breakTimer, setBreakTimer] = useState(false);
 
   useEffect(() => {
-    startTime.current = new Date().getTime();
+    startTime.current = moment().valueOf();
     return () => {
       console.log("clear!");
       alert("clear!");
@@ -35,23 +37,22 @@ export default function InputController({ parasArr }) {
   }, []);
 
   useEffect(() => {
+    if (breakTimer) return;
     if (!timer.current) {
       timer.current = setTimeout(function wait() {
-        const { passed, adjust } = checkTime();
-        setTimePassed(passed);
-        setTimeout(wait, 5000 - adjust);
-      }, 5000);
+        const { diffInMs, adjust } = checkTime();
+        setMsecPassed(diffInMs);
+        setTimeout(wait, timerUpdateInterval - adjust);
+      }, timerUpdateInterval);
     }
-    console.log(timePassed);
-    let test = new Date(timePassed);
-    console.log(test);
-  }, [timePassed]);
+  }, [msecPassed, breakTimer]);
 
   const checkTime = () => {
-    const now = new Date().getTime();
-    const passed = now - startTime.current;
-    const adjust = passed % 5000;
-    return { passed, adjust };
+    const now = moment().valueOf();
+    const diffInMs = now - startTime.current;
+    const adjust = diffInMs % timerUpdateInterval;
+    const passed = moment(diffInMs).format("mm-ss");
+    return { diffInMs, adjust };
   };
 
   const checkInput = (e) => {
@@ -63,21 +64,32 @@ export default function InputController({ parasArr }) {
       setProcessedSymbols(processedSymbols + currentSymbol);
       if (!incomingSymbols[0]) {
         //Task completed, break
-        incrementSuccessCount((prev) => prev + 1);
+
         console.log("cleanup!");
         clearTimeout(timer.current);
+        setBreakTimer(true); //!
         alert("Congrats! Task completed!");
         return;
       }
       setCurrentSymbol(incomingSymbols[0]);
-
       setIncomingSymbols(incomingSymbols.slice(1));
-      incrementSuccessCount((prev) => prev + 1);
     } else {
       console.log("Incorrect!");
       setErrIndicator("incorrect");
       incrementErrorCount((prev) => prev + 1);
     }
+    setSpeed(calculateSpeed(msecPassed, processedSymbols.length, errorCount));
+    setAccuracy(calculateAccuracy(processedSymbols.length, errorCount));
+    console.log(speed, accuracy);
+  };
+
+  const calculateSpeed = (msec, success, errors) => {
+    const minutes = msec / 1000 / 60;
+    return Math.floor((success + errors) / minutes);
+  };
+  const calculateAccuracy = (success, errors) => {
+    const ratio = 1 - errors / (success + errors);
+    return Math.floor(ratio * 100);
   };
 
   return (
@@ -93,9 +105,9 @@ export default function InputController({ parasArr }) {
           incomingSymbols={incomingSymbols}
           errIndicator={errIndicator}
         />
-        <div>Error - {errorCount}</div>
-        <div>Success - {successCount}</div>
-        <div>Timer {timePassed}</div>
+        <div>Speed - {speed}</div>
+        <div>Accuracy - {accuracy}</div>
+        <div>Timer {moment(msecPassed).format("mm-ss")}</div>
       </div>
 
       <FocusLock>
