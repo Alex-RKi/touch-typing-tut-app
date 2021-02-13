@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import "./text-display.css";
 
 const TextDisplay = ({
@@ -10,10 +10,13 @@ const TextDisplay = ({
   //
 
   return (
-    <p className="border border-1 rounded p-5">
-      <span>{`${processedSymbols}`}</span>
-      <span className={`current ${errIndicator}`}>{`${currentSymbol}`}</span>
-      <span>{`${incomingSymbols}`}</span>
+    <p className="">
+      <span key="start">{`${processedSymbols}`}</span>
+      <span
+        key="middle"
+        className={`current ${errIndicator}`}
+      >{`${currentSymbol}`}</span>
+      <span key="end">{`${incomingSymbols}`}</span>
     </p>
   );
 };
