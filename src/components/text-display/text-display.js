@@ -10,13 +10,13 @@ const TextDisplay = ({
   //
 
   return (
-    <p className="">
-      <span key="start">{`${processedSymbols}`}</span>
-      <span
-        key="middle"
+    <p>
+      <span key="passed" className='passed text-muted blockquote'>{`${processedSymbols}`}</span>
+      <mark
+        key="current"
         className={`current ${errIndicator}`}
-      >{`${currentSymbol}`}</span>
-      <span key="end">{`${incomingSymbols}`}</span>
+      >{`${currentSymbol}`}</mark>
+      <span key="incoming" className='blockquote'>{`${incomingSymbols}`}</span>
     </p>
   );
 };

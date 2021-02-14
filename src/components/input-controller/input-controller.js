@@ -3,7 +3,7 @@ import "./input-controller.css";
 import TextDisplay from "../text-display";
 import FocusLock from "react-focus-lock";
 import Indicators from "../indicators";
-
+import Report from "../report";
 export default function InputController({ parasArr, reloadText }) {
   const fullString = createClearString(parasArr);
   const firstSymbol = fullString[0];
@@ -20,17 +20,16 @@ export default function InputController({ parasArr, reloadText }) {
   const [breakTimer, setBreakTimer] = useState(false);
   const [report, setReport] = useState("");
 
-
-
   useEffect(() => {}, [breakTimer]);
   const checkInput = (e) => {
+    if (breakTimer) return;
     const key = e.target.value;
     setHiddenInputValue("");
     if (key === currentSymbol) {
       setErrIndicator("correct");
       setProcessedSymbols(processedSymbols + currentSymbol);
       if (!incomingSymbols[0]) {
-        setBreakTimer(true); //!
+        setBreakTimer(true); 
         setCurrentSymbol("");
         return;
       }
@@ -44,27 +43,21 @@ export default function InputController({ parasArr, reloadText }) {
   const passResultsText = (str) => {
     setReport(str);
   };
-
-  const btn = (
-    <button className="btn-n btn-primary" onClick={reloadText}>
-      Try again
-    </button>
-  );
   function createClearString(arr) {
-    return arr.map((elem) => {
-      return elem.split("  ").join(" ");
-    }).join(" ");
+    return arr
+      .map((elem) => {
+        return elem.split("  ").join(" ");
+      })
+      .join(" ");
   }
-
   return (
     <div className="container">
-        <Indicators
-          correct={processedSymbols.length}
-          incorrect={errorCount}
-          breakTimer={breakTimer}
-          passResultsText={passResultsText}
-        />
-
+      <Indicators
+        correct={processedSymbols.length}
+        incorrect={errorCount}
+        breakTimer={breakTimer}
+        passResultsText={passResultsText}
+      />
 
       <div className="mt-5 border border-1 rounded p-3">
         <TextDisplay
@@ -76,18 +69,9 @@ export default function InputController({ parasArr, reloadText }) {
       </div>
 
       {report ? (
-        <div className="report">
-          {report}
-          {btn}
-        </div>
+        <Report reloadText={reloadText} {...report} />
       ) : (
-        <FocusLock
-          disabled={breakTimer}
-          onDeactivation={() => {
-            console.log("deactivated");
-            hiddenInput.current.blur();
-          }}
-        >
+        <FocusLock disabled={breakTimer}>
           <input
             className="hidden-input"
             ref={hiddenInput}

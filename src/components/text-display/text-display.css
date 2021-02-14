@@ -1,10 +1,11 @@
 .current {
   border-radius: 2px;
+  font-size: 1.2em
 }
 .correct {
-  background-color: rgb(32, 216, 32);
+  background-color: rgba(46, 189, 46, 0.39);
 }
 .incorrect {
-  background-color: rgb(241, 35, 35);
+  background-color: rgba(207, 28, 28, 0.384);
 
 }

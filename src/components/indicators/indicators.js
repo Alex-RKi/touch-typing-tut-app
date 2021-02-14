@@ -14,7 +14,13 @@ const Indicators = ({ correct, incorrect, breakTimer, passResultsText }) => {
   const createReport = () => {
     const min = moment(msecPassed).minutes();
     const sec = moment(msecPassed).seconds();
-    return `Congrats! You completed the task within ${min} minutes ${sec} seconds, ${accuracy}% accuracy, avarage ${speed} speed and made ${incorrect} mistakes. Would you like to try again?`;
+    return {
+      min,
+      sec,
+      accuracy,
+      speed,
+      incorrect,
+    };
   };
 
   useEffect(() => {
@@ -37,6 +43,7 @@ const Indicators = ({ correct, incorrect, breakTimer, passResultsText }) => {
         passResultsText(report);
       };
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [msecPassed, correct, incorrect, breakTimer]);
   //-----
   const checkTime = () => {
