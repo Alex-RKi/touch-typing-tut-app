@@ -37,16 +37,20 @@ function App() {
       </div>
     );
   }
+
+  const spinnerElem = (
+    <div className="spinner mt-5 d-flex justify-content-center">
+      <Spinner />
+    </div>
+  );
+  const contentElem = (
+    <InputController parasArr={parasArr} reloadText={reloadText} />
+  );
+
   return (
     <div className="App container">
       <h1 className="display-6 p-2 border-bottom">Touch-typing tutor</h1>
-      {isLoading ? (
-        <div className="spinner mt-5 d-flex justify-content-center">
-          <Spinner />
-        </div>
-      ) : (
-        <InputController parasArr={parasArr} reloadText={reloadText} />
-      )}
+      {isLoading ? spinnerElem : contentElem}
     </div>
   );
 }
