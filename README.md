@@ -2,7 +2,7 @@
 
 Simple App which fetches Lorem Ipsum from API and lets you test your skills in touch-type. Provides real-time indication of your `typing speed`, `accuracy` and `timing`. After task complition, you'll get your final results.
 
-Builded via React and following npm packages: mommet, react-focus-lock.
+Builded via React and following npm packages: moment, react-focus-lock.
 
 ## Available Scripts
 
